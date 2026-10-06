@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#151414">
+  <meta name="description" content="Field notes PoC: offline photo, voice and text capture for content creators.">
+  <title>Field Notes PoC</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <button class="icon-btn" id="backBtn" aria-label="Back" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="app-title">
+      <div id="title">Field notes</div>
+      <div id="subtitle" class="app-subtitle"></div>
+    </div>
+    <button class="install-btn" id="installBtn" hidden>Install</button>
+    <span class="net-pill" id="netPill" role="status">Online</span>
+    <button class="icon-btn" id="diagBtn" aria-label="Diagnostics">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <div class="offline-banner" id="offlineBanner" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .8-7.9A6 6 0 0 0 6.3 9.5 4.3 4.3 0 0 0 7 18z"/><path d="M3 3l18 18"/></svg>
+    <div><strong>You are offline</strong><br>Keep capturing. Everything is saved on this device.</div>
+  </div>
+
+  <main id="main"></main>
+
+  <nav class="capture-bar" id="captureBar" hidden>
+    <button class="capture-btn" data-action="photo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      Photo
+    </button>
+    <button class="capture-btn primary" data-action="voice">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      Voice
+    </button>
+    <button class="capture-btn" data-action="text">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>
+      Text
+    </button>
+  </nav>
+
+  <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+
+  <section class="overlay" id="recorder" hidden aria-label="Voice recording">
+    <div class="rec-status"><span class="rec-dot"></span> Recording</div>
+    <div class="rec-time" id="recTime">00:00</div>
+    <canvas id="recLevel" width="320" height="80" aria-hidden="true"></canvas>
+    <div class="rec-hint" id="recHint"></div>
+    <div class="rec-actions">
+      <button class="btn secondary" data-action="rec-cancel">Discard</button>
+      <button class="rec-stop" data-action="rec-stop" aria-label="Stop and save">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+      </button>
+      <span class="rec-spacer"></span>
+    </div>
+  </section>
+
+  <section class="overlay" id="textEditor" hidden aria-label="Text note">
+    <label class="field-label" for="noteText">Text note</label>
+    <textarea id="noteText" rows="8" placeholder="Write your note..."></textarea>
+    <div class="row-actions">
+      <button class="btn secondary" data-action="text-cancel">Cancel</button>
+      <button class="btn primary" data-action="text-save">Save</button>
+    </div>
+  </section>
+
+  <section class="overlay" id="diagnostics" hidden aria-label="Diagnostics">
+    <h2>Diagnostics</h2>
+    <dl id="diagList" class="diag"></dl>
+    <div class="row-actions">
+      <button class="btn secondary" data-action="persist">Request persistent storage</button>
+      <button class="btn primary" data-action="diag-close">Close</button>
+    </div>
+  </section>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
