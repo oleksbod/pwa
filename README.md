@@ -20,6 +20,22 @@
 | `sw.js` | кешує застосунок, щоб він відкривався без інтернету |
 | `manifest.webmanifest`, `icons/` | дозволяють встановити застосунок на головний екран |
 
+## Публікація на GitHub Pages
+
+Камера, мікрофон, Service Worker і встановлення працюють **тільки через HTTPS**. GitHub Pages дає HTTPS безкоштовно.
+
+1. Репозиторій має бути **Public**. Для Private потрібен GitHub Pro, Team або Enterprise. Перевірити: Settings → General → Danger Zone → Change visibility.
+2. Відкрити **Settings → Pages** (https://github.com/oleksbod/pwa/settings/pages).
+3. У блоці **Build and deployment**:
+   - **Source:** `Deploy from a branch`
+   - **Branch:** `main`, папка `/ (root)` → **Save**
+4. Зачекати 1–2 хвилини. Прогрес видно у вкладці **Actions** (workflow `pages build and deployment`).
+5. Застосунок буде доступний за адресою **https://oleksbod.github.io/pwa/**. Посилання також з'явиться вгорі сторінки Settings → Pages.
+6. Кожен `git push` у `main` автоматично публікує нову версію. Перед пушем не забудь підняти `VERSION` у `sw.js`.
+
+Файл `.nojekyll` вимикає обробку Jekyll: файли віддаються як є.
+Усі шляхи в застосунку відносні (`./`), тому він працює з підпапки `/pwa/`.
+
 ## Як тестувати (Android, Chrome)
 
 1. Відкрити посилання GitHub Pages **з інтернетом**.
